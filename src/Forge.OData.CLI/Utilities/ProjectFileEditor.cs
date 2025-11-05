@@ -7,13 +7,8 @@ public static class ProjectFileEditor
     public static void AddAdditionalFile(string projectPath, string fileName)
     {
         var doc = XDocument.Load(projectPath);
-        var project = doc.Root;
-
-        if (project == null)
-        {
-            throw new InvalidOperationException("Invalid project file");
-        }
-
+        var project = doc.Root ?? throw new InvalidOperationException("Invalid project file");
+        
         // Check if AdditionalFiles ItemGroup exists
         var additionalFilesGroup = project.Elements("ItemGroup")
             .FirstOrDefault(g => g.Elements("AdditionalFiles").Any());

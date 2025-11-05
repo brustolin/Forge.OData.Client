@@ -18,10 +18,10 @@ class Program
             IsRequired = true
         };
         var projectOption = new Option<string?>(
-            aliases: new[] { "--project", "-p" },
+            aliases: ["--project", "-p"],
             description: "Path to the project file (defaults to current directory)");
         var clientNameOption = new Option<string?>(
-            aliases: new[] { "--client-name", "-n" },
+            aliases: ["--client-name", "-n"],
             description: "Name for the generated client class");
 
         addCommand.AddOption(endpointOption);
@@ -35,7 +35,7 @@ class Program
         // Update command
         var updateCommand = new Command("update", "Update OData metadata from the server");
         var updateProjectOption = new Option<string?>(
-            aliases: new[] { "--project", "-p" },
+            aliases: ["--project", "-p"],
             description: "Path to the project file (defaults to current directory)");
 
         updateCommand.AddOption(updateProjectOption);

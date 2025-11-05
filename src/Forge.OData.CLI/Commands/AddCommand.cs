@@ -1,5 +1,4 @@
 using System.Text;
-using System.Xml.Linq;
 using Forge.OData.CLI.Utilities;
 
 namespace Forge.OData.CLI.Commands;

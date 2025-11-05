@@ -4,15 +4,19 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/sample/">
+    <Project Path="sample/Forge.OData.AttributeSample/Forge.OData.AttributeSample.csproj" />
+    <Project Path="sample/Forge.OData.Sample/Forge.OData.Sample.csproj" />
+    <Project Path="sample/Forge.OData.Service/Forge.OData.Service.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/Forge.OData.Attributes/Forge.OData.Attributes.csproj" />
+    <Project Path="src/Forge.OData.CLI/Forge.OData.CLI.csproj" />
     <Project Path="src/Forge.OData.Client.Core/Forge.OData.Client.Core.csproj" />
     <Project Path="src/Forge.OData.Generator/Forge.OData.Generator.csproj" />
   </Folder>
   <Folder Name="/tests/">
-    <Project Path="tests/Forge.OData.AttributeSample/Forge.OData.AttributeSample.csproj" />
+    <Project Path="tests/Forge.OData.CLI.Tests/Forge.OData.CLI.Tests.csproj" />
     <Project Path="tests/Forge.OData.Client.Tests/Forge.OData.Client.Tests.csproj" />
-    <Project Path="tests/Forge.OData.Sample/Forge.OData.Sample.csproj" />
-    <Project Path="tests/Forge.OData.Service/Forge.OData.Service.csproj" />
   </Folder>
 </Solution>
