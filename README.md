@@ -347,7 +347,7 @@ var prodClient = new ApiClient(
 ## 📚 More Information
 
 - **Technical documentation**: See [CONTRIBUTE.md](CONTRIBUTE.md) for detailed architecture, project structure, and contribution guidelines
-- **Examples**: Check the `/sample` directory for working examples
+- **Examples**: Check the `sample/` directory for working examples
 - **Changelog**: See [CHANGELOG.md](CHANGELOG.md) for version history
 
 ## 🤝 Contributing
