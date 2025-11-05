@@ -8,9 +8,9 @@
     
     <!-- Package Metadata -->
     <PackageId>Forge.OData.Client</PackageId>
-    <Version>1.0.0</Version>
-    <Authors>brustolin</Authors>
-    <Company>Forge.OData</Company>
+    <Version>0.0.1</Version>
+    <Authors>Dhiogo Brustolin</Authors>
+    <Company>Brustolin</Company>
     <Product>Forge.OData.Client</Product>
     <Description>A .NET 9 OData client with source generator that automatically generates model classes and client code from OData $metadata XML files. Features include type-safe client, LINQ to OData translation, attribute-based generation, and performance optimized JSON converters.</Description>
     <PackageTags>odata;odata-client;source-generator;linq;rest-api;code-generation;net9;roslyn;json-converter</PackageTags>
