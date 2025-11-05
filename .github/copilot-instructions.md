@@ -189,7 +189,7 @@ dotnet run --project sample/Forge.OData.Service/Forge.OData.Service.csproj
 | Edm.DateTime        | DateTime         |
 | Edm.DateTimeOffset  | DateTimeOffset   |
 | Edm.Guid            | Guid             |
-| Collection(T)       | List&lt;T&gt;    |
+| Collection(T)       | List\<T\>        |
 
 ## LINQ to OData Translation Reference
 
