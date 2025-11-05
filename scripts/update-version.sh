@@ -23,11 +23,23 @@ echo "Updating version to $VERSION..."
 
 # Update Forge.OData.Client project version
 echo "  Updating Forge.OData.Client.csproj..."
-sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.Client/Forge.OData.Client.csproj
+if [[ "$(uname)" == "Darwin" ]]; then
+    # BSD sed (macOS) requires an explicit empty backup suffix for in-place edits
+    sed -i '' "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.Client/Forge.OData.Client.csproj
+else
+    # GNU sed (Linux)
+    sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.Client/Forge.OData.Client.csproj
+fi
 
 # Update Forge.OData.CLI project version
 echo "  Updating Forge.OData.CLI.csproj..."
-sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.CLI/Forge.OData.CLI.csproj
+if [[ "$(uname)" == "Darwin" ]]; then
+    # BSD sed (macOS) requires an explicit empty backup suffix for in-place edits
+    sed -i '' "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.CLI/Forge.OData.CLI.csproj
+else
+    # GNU sed (Linux)
+    sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.CLI/Forge.OData.CLI.csproj
+fi
 
 # Update README.md installation instructions
 echo "  Updating README.md..."
@@ -46,9 +58,9 @@ TEMP_FILE=$(mktemp)
 # Read the changelog and update it
 awk -v version="$VERSION" -v date="$DATE" '
 /^## \[Unreleased\]/ {
-    print $0
-    print ""
+    # Replace the Unreleased header with the new released version header
     print "## [" version "] - " date
+    # skip the original Unreleased header line
     next
 }
 { print }
