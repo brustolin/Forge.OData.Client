@@ -20,7 +20,7 @@ BEGIN { found=0; printing=0 }
     if (printing) {
         exit
     }
-    if ($0 ~ "\\[" version "\\]") {
+    if ($0 ~ "^## \\[" version "\\]") {
         found=1
         printing=1
         next
