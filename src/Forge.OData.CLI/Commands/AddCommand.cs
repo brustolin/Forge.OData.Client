@@ -1,4 +1,5 @@
 using System.Text;
+using System.Xml.Linq;
 using Forge.OData.CLI.Utilities;
 
 namespace Forge.OData.CLI.Commands;
@@ -63,9 +64,18 @@ public static class AddCommand
             }
             else
             {
-                // Default to project directory
-                outputDirectory = projectDir;
-                relativeOutputPath = string.Empty;
+                // Default to the path the command was run
+                var currentDirectory = Directory.GetCurrentDirectory();
+                outputDirectory = currentDirectory;
+                
+                // Calculate relative path from project directory to current directory
+                relativeOutputPath = Path.GetRelativePath(projectDir, currentDirectory);
+                
+                // If current directory is the project directory, use empty string
+                if (relativeOutputPath == ".")
+                {
+                    relativeOutputPath = string.Empty;
+                }
             }
             
             var clientFilePath = Path.Combine(outputDirectory, clientFileName);
@@ -87,8 +97,14 @@ public static class AddCommand
             }
             else
             {
-                // Use default namespace
-                effectiveNamespace = "ODataClients";
+                // Try to extract namespace from metadata
+                effectiveNamespace = ExtractNamespaceFromMetadata(metadata) ?? string.Empty;
+                
+                // If nothing found, use default namespace
+                if (string.IsNullOrWhiteSpace(effectiveNamespace))
+                {
+                    effectiveNamespace = "ODataClients";
+                }
             }
 
             if (File.Exists(clientFilePath))
@@ -198,6 +214,33 @@ public static class AddCommand
         }
         
         return $"{projectName}.{normalizedPath}";
+    }
+
+    private static string? ExtractNamespaceFromMetadata(string metadataXml)
+    {
+        try
+        {
+            var doc = XDocument.Parse(metadataXml);
+            
+            // OData metadata uses the edmx namespace
+            XNamespace edmx = "http://docs.oasis-open.org/odata/ns/edmx";
+            XNamespace edm = "http://docs.oasis-open.org/odata/ns/edm";
+            
+            // Find the first Schema element with a Namespace attribute
+            var schema = doc.Descendants(edm + "Schema")
+                .FirstOrDefault(s => s.Attribute("Namespace") != null);
+            
+            if (schema != null)
+            {
+                return schema.Attribute("Namespace")?.Value;
+            }
+        }
+        catch
+        {
+            // If we can't parse the metadata, return null
+        }
+        
+        return null;
     }
 
     private static string GenerateClientClass(string className, string metadataFile, string endpoint, string namespaceName)
