@@ -469,7 +469,7 @@ Benefits:
 | Edm.DateTime | DateTime |
 | Edm.DateTimeOffset | DateTimeOffset |
 | Edm.Guid | Guid |
-| Collection(T) | List&lt;T&gt; |
+| Collection(T) | List\<T\> |
 
 ### LINQ to OData Translation
 
