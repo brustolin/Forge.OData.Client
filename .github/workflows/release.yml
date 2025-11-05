@@ -15,6 +15,9 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # needed for creating releases and pushing code
+      id-token: write  # enable GitHub OIDC token issuance for this job
 
     steps:
       - name: Validate version format
@@ -96,6 +99,18 @@ jobs:
         with:
           name: nuget-packages
           path: ./artifacts/*.nupkg
+
+      - name: NuGet login (OIDC → temp API key)
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: NuGet push Forge.OData.Client
+        run: dotnet nuget push artifacts/Forge.OData.Client.*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
+
+      - name: NuGet push Forge.OData.CLI
+        run: dotnet nuget push artifacts/Forge.OData.CLI.*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json
 
       - name: Merge release branch to main
         run: |
