@@ -19,7 +19,7 @@
     <RepositoryUrl>https://github.com/brustolin/Forge.OData.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Copyright>Copyright (c) 2025 brustolin</Copyright>
+    <Copyright>Copyright (c) 2025 Brustolin</Copyright>
     <PackageReleaseNotes>Initial release with OData client generation from metadata, LINQ to OData support, and source generators.</PackageReleaseNotes>
   </PropertyGroup>
   
