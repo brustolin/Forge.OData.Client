@@ -1,4 +1,4 @@
-using Forge.OData.Client.Core;
+using Forge.OData.Client;
 using System.Linq.Expressions;
 
 namespace Forge.OData.Client.Tests

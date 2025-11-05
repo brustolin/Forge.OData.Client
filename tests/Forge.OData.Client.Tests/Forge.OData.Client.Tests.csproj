@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../../src/Forge.OData.Client.Core/Forge.OData.Client.Core.csproj" />
+    <ProjectReference Include="../../src/Forge.OData.Client/Forge.OData.Client.csproj" />
   </ItemGroup>
 
 </Project>
