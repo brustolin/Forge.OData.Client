@@ -22,7 +22,7 @@ A source generator project that reads OData $metadata XML files and generates:
 - Client class with entity set properties (standalone or partial)
 - All code generation uses Roslyn's SyntaxFactory for clean, maintainable code
 
-### Forge.OData.Client.Core
+### Forge.OData.Client
 
 Utility library that provides:
 - `ODataQueryable<T>`: Fluent API for building OData queries
@@ -141,7 +141,7 @@ This approach generates a client class named based on your XML filename (e.g., `
   <ProjectReference Include="path/to/Forge.OData.Generator/Forge.OData.Generator.csproj" 
                     OutputItemType="Analyzer" 
                     ReferenceOutputAssembly="false" />
-  <ProjectReference Include="path/to/Forge.OData.Client.Core/Forge.OData.Client.Core.csproj" />
+  <ProjectReference Include="path/to/Forge.OData.Client/Forge.OData.Client.csproj" />
 </ItemGroup>
 ```
 
@@ -192,7 +192,7 @@ This approach generates a partial class, allowing you to customize the client na
   <ProjectReference Include="path/to/Forge.OData.Generator/Forge.OData.Generator.csproj" 
                     OutputItemType="Analyzer" 
                     ReferenceOutputAssembly="false" />
-  <ProjectReference Include="path/to/Forge.OData.Client.Core/Forge.OData.Client.Core.csproj" />
+  <ProjectReference Include="path/to/Forge.OData.Client/Forge.OData.Client.csproj" />
 </ItemGroup>
 
 <ItemGroup>

@@ -23,7 +23,7 @@ namespace Forge.OData.Generator
                     UsingDirective(ParseName("System.Net.Http")),
                     UsingDirective(ParseName("System.Text.Json")),
                     UsingDirective(ParseName("System.Threading.Tasks")),
-                    UsingDirective(ParseName("Forge.OData.Client.Core"))
+                    UsingDirective(ParseName("Forge.OData.Client"))
                 }));
 
             // Create partial class

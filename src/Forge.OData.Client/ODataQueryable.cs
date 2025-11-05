@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using System.Text.Json;
 
-namespace Forge.OData.Client.Core
+namespace Forge.OData.Client
 {
     /// <summary>
     /// Provides a queryable interface for OData entities that translates LINQ expressions to OData queries

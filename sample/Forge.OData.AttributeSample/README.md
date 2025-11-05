@@ -38,7 +38,7 @@ Add the necessary references and metadata file to your `.csproj`:
 ```xml
 <ItemGroup>
   <ProjectReference Include="../../src/Forge.OData.Attributes/Forge.OData.Attributes.csproj" />
-  <ProjectReference Include="../../src/Forge.OData.Client.Core/Forge.OData.Client.Core.csproj" />
+  <ProjectReference Include="../../src/Forge.OData.Client/Forge.OData.Client.csproj" />
   <ProjectReference Include="../../src/Forge.OData.Generator/Forge.OData.Generator.csproj" 
                     OutputItemType="Analyzer" 
                     ReferenceOutputAssembly="false" />

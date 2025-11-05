@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Forge.OData.Client.Core
+namespace Forge.OData.Client
 {
     /// <summary>
     /// Builds OData query strings from query parameters

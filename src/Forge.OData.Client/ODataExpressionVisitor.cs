@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace Forge.OData.Client.Core
+namespace Forge.OData.Client
 {
     /// <summary>
     /// Visitor that converts LINQ expressions to OData filter syntax

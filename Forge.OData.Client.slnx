@@ -12,7 +12,7 @@
   <Folder Name="/src/">
     <Project Path="src/Forge.OData.Attributes/Forge.OData.Attributes.csproj" />
     <Project Path="src/Forge.OData.CLI/Forge.OData.CLI.csproj" />
-    <Project Path="src/Forge.OData.Client.Core/Forge.OData.Client.Core.csproj" />
+    <Project Path="src/Forge.OData.Client/Forge.OData.Client.csproj" />
     <Project Path="src/Forge.OData.Generator/Forge.OData.Generator.csproj" />
   </Folder>
   <Folder Name="/tests/">
