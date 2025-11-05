@@ -191,13 +191,13 @@ public class TravelService
         _httpClient = httpClientFactory.CreateClient();
     }
     
-    public async Task<List<Person>> GetTravelersAsync(string countryName)
+    public async Task<List<Person>> GetTravelersAsync(string firstNamePrefix)
     {
         var client = new TripPinService(_httpClient);
         
         // Type-safe LINQ queries
         return await client.People
-            .Where(p => p.FavoriteFeature == "Feature1")
+            .Where(p => p.FirstName.StartsWith(firstNamePrefix))
             .OrderBy(p => p.LastName)
             .ToListAsync();
     }
@@ -311,14 +311,15 @@ namespace MyApp.Services
     public partial class ApiClient
     {
         // Add your custom methods
-        public async Task<Product> GetFeaturedProductAsync()
+        public async Task<Product?> GetFeaturedProductAsync()
         {
-            return (await Products
+            var results = await Products
                 .Where(p => p.Featured)
                 .OrderByDescending(p => p.Rating)
                 .Take(1)
-                .ToListAsync())
-                .FirstOrDefault();
+                .ToListAsync();
+            
+            return results.FirstOrDefault();
         }
         
         // Add custom properties
