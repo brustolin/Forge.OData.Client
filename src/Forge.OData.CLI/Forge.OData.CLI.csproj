@@ -10,6 +10,7 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>odata</ToolCommandName>
     <PackageId>Forge.OData.CLI</PackageId>
+    <AssemblyName>dotnet-odata</AssemblyName>
     <Description>CLI tool for managing OData metadata in projects. Supports adding and updating OData service metadata files, similar to how dotnet ef manages migrations.</Description>
     
     <!-- NuGet Package Metadata -->
