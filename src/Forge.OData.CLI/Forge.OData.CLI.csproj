@@ -10,11 +10,29 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>odata</ToolCommandName>
     <PackageId>Forge.OData.CLI</PackageId>
-    <Description>CLI tool for managing OData metadata in projects</Description>
+    <Description>CLI tool for managing OData metadata in projects. Supports adding and updating OData service metadata files, similar to how dotnet ef manages migrations.</Description>
+    
+    <!-- NuGet Package Metadata -->
+    <Version>1.0.0</Version>
+    <Authors>Forge.OData Contributors</Authors>
+    <Company>Forge.OData</Company>
+    <Product>Forge.OData.CLI</Product>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/brustolin/Forge.OData.Client</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/brustolin/Forge.OData.Client</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>odata;cli;dotnet-tool;code-generator;source-generator</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright © 2024 Forge.OData Contributors</Copyright>
+    <PackageReleaseNotes>Initial release of Forge.OData.CLI as a .NET tool</PackageReleaseNotes>
     
     <!-- Suppress known vulnerabilities in required dependencies -->
     <NoWarn>$(NoWarn);NU1903</NoWarn>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
