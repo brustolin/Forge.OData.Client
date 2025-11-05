@@ -1,372 +1,367 @@
 # Forge.OData.Client
 
-A .NET 9 OData client with source generator that automatically generates model classes and client code from OData $metadata XML files.
+**Your project needs to connect to an OData service?** Just point our CLI at the endpoint, and everything gets generated for you—models, client, type-safe queries. **No manual work. No boilerplate. Just instant OData integration.**
 
-## Features
+## ⚡ Quick Start
 
-- **Source Generator**: Automatically generates C# model classes from OData metadata
-- **Type-Safe Client**: Generated client class with strongly-typed entity sets
-- **LINQ to OData**: Translate LINQ expressions to OData query syntax
-- **Uses SyntaxFactory**: Clean code generation using Roslyn's SyntaxFactory API
-- **Modern .NET**: Built for .NET 9 with latest C# features
-- **Attribute-Based Generation**: Use `[ODataClient]` attribute for custom client classes
-- **Performance Optimized**: Custom JSON converters avoid reflection during deserialization
-
-## Projects
-
-### Forge.OData.Generator
-
-A source generator project that reads OData $metadata XML files and generates:
-- Model classes for EntityTypes and ComplexTypes with `[JsonConverter]` attributes
-- Custom `JsonConverter<T>` for each model for efficient deserialization
-- Client class with entity set properties (standalone or partial)
-- All code generation uses Roslyn's SyntaxFactory for clean, maintainable code
-
-### Forge.OData.Client
-
-Utility library that provides:
-- `ODataQueryable<T>`: Fluent API for building OData queries
-- `ODataExpressionVisitor`: Converts LINQ expressions to OData filter syntax
-- `ODataQueryBuilder`: Builds OData query strings
-
-### Forge.OData.Attributes
-
-Attribute library for declarative client generation:
-- `ODataClientAttribute`: Mark partial classes for OData client generation
-- Supports custom class names, namespaces, and default endpoints
-
-### Forge.OData.Service
-
-Test service project that provides:
-- ASP.NET Core Web API with OData v4 endpoints
-- In-memory sample data for Products, Orders, and Customers
-- Full OData query capabilities for testing and validation
-- Can be used to test the generated client code against a real OData service
-
-### Forge.OData.CLI
-
-Command-line tool for managing OData metadata in projects:
-- **dotnet tool**: Install globally or locally as a .NET tool
-- **add command**: Download metadata from an OData endpoint and set up a new client
-- **update command**: Update existing metadata files from their configured endpoints
-- Automates the process of adding and maintaining OData clients in your projects
-
-## Using the CLI Tool
-
-The Forge.OData.CLI tool provides a convenient way to manage OData metadata in your projects, similar to how `dotnet ef` manages Entity Framework migrations.
-
-### Installation
-
-Install the tool globally:
+### 1. Install the CLI Tool
 
 ```bash
 dotnet tool install --global Forge.OData.CLI
 ```
 
-Or install it locally in your project:
+### 2. Add an OData Client to Your Project
+
+Navigate to your project and run:
+
+```bash
+dotnet odata add --endpoint https://services.odata.org/V4/TripPinServiceRW
+```
+
+### 3. Build and Code
+
+```bash
+dotnet build
+```
+
+That's it! You now have a fully functional, type-safe OData client ready to use:
+
+```csharp
+using var httpClient = new HttpClient();
+var client = new TripPinServiceRWClient(httpClient);
+
+// Query with LINQ - it just works!
+var people = await client.People
+    .Where(p => p.FirstName.StartsWith("R"))
+    .OrderBy(p => p.LastName)
+    .Take(10)
+    .ToListAsync();
+
+foreach (var person in people)
+{
+    Console.WriteLine($"{person.FirstName} {person.LastName}");
+}
+```
+
+## 🎯 Why Forge.OData.Client?
+
+**Stop writing boilerplate.** Stop manually creating DTOs. Stop fighting with HTTP requests and JSON parsing.
+
+You have an OData API. You want to use it. The OData CLI does the heavy lifting:
+
+- ✅ **Downloads the metadata** from your OData service
+- ✅ **Generates all model classes** with proper types and attributes  
+- ✅ **Creates a type-safe client** with IntelliSense support
+- ✅ **Translates LINQ to OData queries** automatically
+- ✅ **Handles JSON serialization** with optimized converters
+
+All this happens during your normal `dotnet build`. No runtime reflection. No performance overhead.
+
+## 📦 Installation
+
+Install the Forge OData CLI as a global tool:
+
+```bash
+dotnet tool install --global Forge.OData.CLI
+```
+
+Or install it locally in your project for team consistency:
 
 ```bash
 dotnet new tool-manifest  # if you don't have one already
 dotnet tool install --local Forge.OData.CLI
 ```
 
-### Adding OData Metadata to Your Project
+## 🚀 Usage Examples
 
-Use the `add` command to download metadata from an OData endpoint and configure your project:
+### Basic Usage: Connect to Any OData Service
 
 ```bash
-dotnet odata add --endpoint https://services.odata.org/V4/TripPinServiceRW --client-name TripPinService
+# Simple: Just provide the endpoint
+dotnet odata add --endpoint https://services.odata.org/V4/Northwind/Northwind.svc
 ```
 
-This command will:
-1. Download the metadata XML from the endpoint
-2. Save it as `TripPinServiceMetadata.xml` in your project
-3. Create a `TripPinService.cs` file with the `[ODataClient]` attribute
-4. Add both files to your project's `.csproj` file
-5. Configure the project to use the OData generator
+The CLI will:
+1. Download the `$metadata` from the endpoint
+2. Generate a client class named `NorthwindClient` (derived from URL)
+3. Create all model classes for entities (Products, Orders, Customers, etc.)
+4. Configure your project automatically
 
-Options:
-- `--endpoint` or `-e` (required): The OData service endpoint URL
-- `--project` or `-p` (optional): Path to the project file (defaults to current directory)
-- `--client-name` or `-n` (optional): Name for the generated client class (auto-generated from endpoint if not specified)
+### Custom Client Name
 
-### Updating Existing Metadata
+```bash
+# Give your client a meaningful name
+dotnet odata add \
+  --endpoint https://api.example.com/odata \
+  --client-name CompanyDataService
+```
 
-Use the `update` command to refresh metadata from the server for all OData clients in your project:
+Now you'll have a `CompanyDataService` class instead of a generic name.
+
+### Organize Clients in Subdirectories
+
+```bash
+# Keep your OData clients organized
+dotnet odata add \
+  --endpoint https://api.example.com/odata \
+  --client-name InventoryService \
+  --output-path Services/OData
+```
+
+This creates:
+- File: `Services/OData/InventoryService.cs`
+- Namespace: `YourProject.Services.OData`
+
+### Custom Namespace
+
+```bash
+# Control the namespace for better organization
+dotnet odata add \
+  --endpoint https://api.example.com/odata \
+  --client-name ProductCatalog \
+  --namespace MyCompany.External.Services
+```
+
+### Multiple OData Services in One Project
+
+```bash
+# Add multiple services - they all work together
+dotnet odata add --endpoint https://api.products.com/odata --client-name ProductService
+dotnet odata add --endpoint https://api.orders.com/odata --client-name OrderService
+dotnet odata add --endpoint https://api.customers.com/odata --client-name CustomerService
+```
+
+Each client is independent, and you can use them side by side in your application.
+
+## 🔄 Keeping Metadata Up to Date
+
+When the OData service changes (new entities, modified properties), just update:
 
 ```bash
 dotnet odata update
 ```
 
-This command will:
-1. Build your project
-2. Find all classes with the `[ODataClient]` attribute
-3. Download updated metadata from each configured endpoint
-4. Update the corresponding metadata XML files
+This command:
+- Finds all OData clients in your project
+- Re-downloads metadata from their endpoints
+- Updates the metadata files
+- Rebuild to regenerate clients with the latest schema
 
-Options:
-- `--project` or `-p` (optional): Path to the project file (defaults to current directory)
-
-### Example Workflow
+**Workflow example:**
 
 ```bash
-# Navigate to your project directory
-cd MyProject
-
-# Add OData metadata from a service
-dotnet odata add --endpoint https://api.example.com/odata --client-name ExampleService
-
-# Build your project to generate the client code
+# Initial setup
+dotnet odata add --endpoint https://api.example.com/odata --client-name ApiClient
 dotnet build
 
-# Later, update the metadata when the service schema changes
+# ... time passes, API changes ...
+
+# Update to latest schema
 dotnet odata update
+dotnet build  # Regenerates with new metadata
+```
 
-# Rebuild to regenerate the client with the new metadata
+## 💡 Real-World Example
+
+Let's say you're building an app that needs to fetch data from the TripPin OData service:
+
+```bash
+# Step 1: Add the client
+cd MyTravelApp
+dotnet odata add \
+  --endpoint https://services.odata.org/V4/TripPinServiceRW \
+  --client-name TripPinService \
+  --output-path Services
+
+# Step 2: Build
 dotnet build
 ```
 
-## Getting Started
-
-You can use the generator in two ways:
-
-### Option 1: Metadata File Approach (Simple)
-
-This approach generates a client class named based on your XML filename (e.g., `MyService.xml` generates `MyServiceClient`).
-
-#### 1. Add the Generator to Your Project
-
-```xml
-<ItemGroup>
-  <ProjectReference Include="path/to/Forge.OData.Generator/Forge.OData.Generator.csproj" 
-                    OutputItemType="Analyzer" 
-                    ReferenceOutputAssembly="false" />
-  <ProjectReference Include="path/to/Forge.OData.Client/Forge.OData.Client.csproj" />
-</ItemGroup>
-```
-
-#### 2. Add Your OData Metadata File
-
-Add your OData $metadata XML file to your project as an additional file:
-
-```xml
-<ItemGroup>
-  <AdditionalFiles Include="YourMetadata.xml" />
-</ItemGroup>
-```
-
-#### 3. Use the Generated Client
-
-The client class name is based on the XML filename. For example, `YourMetadata.xml` generates `YourMetadataClient`:
+Now use it in your code:
 
 ```csharp
-using System.Net.Http;
-using YourNamespace;
+using MyTravelApp.Services;
 
-var httpClient = new HttpClient();
-var client = new YourMetadataClient(httpClient, "https://your-odata-service.com");
-
-// Query with LINQ
-var products = await client.Products
-    .Where(p => p.Price > 10 && p.InStock)
-    .OrderBy(p => p.Name)
-    .Take(10)
-    .ToListAsync();
-```
-
-**Note**: The generator sanitizes the filename to create a valid C# class name:
-- Removes file extension (`.xml`)
-- Removes dots and special characters (e.g., `Resources.OData.xml` becomes `ResourcesODataClient`)
-- Adds underscore prefix if name starts with a digit (e.g., `123Service.xml` becomes `_123ServiceClient`)
-- Appends `Client` suffix to the name
-
-### Option 2: Attribute-Based Approach (Recommended)
-
-This approach generates a partial class, allowing you to customize the client name, namespace, and add your own members.
-
-#### 1. Add Required References
-
-```xml
-<ItemGroup>
-  <ProjectReference Include="path/to/Forge.OData.Attributes/Forge.OData.Attributes.csproj" />
-  <ProjectReference Include="path/to/Forge.OData.Generator/Forge.OData.Generator.csproj" 
-                    OutputItemType="Analyzer" 
-                    ReferenceOutputAssembly="false" />
-  <ProjectReference Include="path/to/Forge.OData.Client/Forge.OData.Client.csproj" />
-</ItemGroup>
-
-<ItemGroup>
-  <AdditionalFiles Include="YourMetadata.xml" />
-</ItemGroup>
-```
-
-#### 2. Create a Partial Class with the Attribute
-
-```csharp
-using Forge.OData.Attributes;
-
-namespace MyApp.Services
+public class TravelService
 {
-    [ODataClient(MetadataFile = "YourMetadata.xml", Endpoint = "https://your-odata-service.com")]
-    public partial class MyCustomClient
+    private readonly HttpClient _httpClient;
+    
+    public TravelService(IHttpClientFactory httpClientFactory)
     {
-        // Add your custom properties and methods here
-        public string ServiceName => "My OData Service";
+        _httpClient = httpClientFactory.CreateClient();
+    }
+    
+    public async Task<List<Person>> GetTravelersAsync(string firstNamePrefix)
+    {
+        var client = new TripPinService(_httpClient);
+        
+        // Type-safe LINQ queries
+        return await client.People
+            .Where(p => p.FirstName.StartsWith(firstNamePrefix))
+            .OrderBy(p => p.LastName)
+            .ToListAsync();
+    }
+    
+    public async Task<Person> GetPersonWithTripsAsync(string username)
+    {
+        var client = new TripPinService(_httpClient);
+        
+        // Expand navigation properties
+        var people = await client.People
+            .Where(p => p.UserName == username)
+            .Expand(p => p.Trips)
+            .ToListAsync();
+            
+        return people.FirstOrDefault();
     }
 }
 ```
 
-#### 3. Use Your Custom Client
+**That's it.** No manual DTOs. No string-based queries. Just clean, type-safe code with full IntelliSense.
+
+## 🔍 What You Get
+
+When you run `dotnet odata add`, the tool generates:
+
+### 1. Model Classes
 
 ```csharp
-using var httpClient = new HttpClient();
-
-// Endpoint is configured via the attribute
-var client = new MyCustomClient(httpClient);
-
-// Use the generated entity sets
-var products = await client.Products
-    .Where(p => p.Price > 10)
-    .OrderBy(p => p.Name)
-    .ToListAsync();
-
-// Access your custom members
-Console.WriteLine(client.ServiceName);
-```
-
-## Code Generation Details
-
-### Generated Models
-
-All generated model classes include:
-- Properties mapped from OData metadata
-- `[Key]` attributes for entity keys
-- `[JsonConverter]` attributes for custom serialization
-- Navigation properties for related entities
-
-Example:
-```csharp
-[JsonConverter(typeof(ProductConverter))]
 public class Product
 {
     [Key]
     public int Id { get; set; }
     public string Name { get; set; }
     public decimal Price { get; set; }
-    // ... other properties
+    public bool InStock { get; set; }
+    // ... all properties from metadata
 }
 ```
 
-### Generated JSON Converters
+### 2. Optimized JSON Converters
 
-Each model gets a custom `JsonConverter<T>` that:
-- Reads JSON directly without reflection
-- Provides better performance than default serialization
-- Handles nullable types correctly
+Custom converters for each model that:
+- Deserialize JSON without reflection (faster!)
+- Handle nullable types correctly
+- Support all OData types
 
-Example converter excerpt:
+### 3. Type-Safe Client
+
 ```csharp
-public class ProductConverter : JsonConverter<Product>
+public partial class YourServiceClient
 {
-    public override Product Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        // Direct property reading without reflection
-        var result = new Product();
-        while (reader.Read())
-        {
-            // ... switch on property names and read values directly
-        }
-        return result;
-    }
-    // ... Write method
+    public ODataQueryable<Product> Products { get; }
+    public ODataQueryable<Order> Orders { get; }
+    public ODataQueryable<Customer> Customers { get; }
+    // ... all entity sets from metadata
 }
 ```
 
-## Usage Examples
+### 4. LINQ Support
 
-### Basic Query
+Write normal C# LINQ queries:
 
 ```csharp
-var products = await client.Products
-    .ToListAsync();
+// This LINQ expression...
+var query = client.Products
+    .Where(p => p.Price > 10 && p.InStock)
+    .OrderBy(p => p.Name)
+    .Skip(20)
+    .Take(10);
 
-// Expand navigation properties
-var ordersWithProducts = await client.Orders
-    .Expand(o => o.Product)
-    .Where(o => o.TotalAmount > 100)
-    .ToListAsync();
-
-// Select specific properties
-var productNames = await client.Products
-    .Select(p => new { p.Name, p.Price })
-    .ToListAsync();
+// ...becomes this OData query automatically:
+// /Products?$filter=Price gt 10 and InStock eq true&$orderby=Name asc&$skip=20&$top=10
 ```
 
-## LINQ to OData Translation
+## 🎨 Supported LINQ Operations
 
-The library supports translating LINQ expressions to OData query syntax:
+| LINQ Expression | OData Query |
+|----------------|-------------|
+| `.Where(p => p.Price > 10)` | `$filter=Price gt 10` |
+| `.Where(p => p.Name == "Test")` | `$filter=Name eq 'Test'` |
+| `.Where(p => p.InStock && p.Price < 100)` | `$filter=InStock eq true and Price lt 100` |
+| `.OrderBy(p => p.Name)` | `$orderby=Name asc` |
+| `.OrderByDescending(p => p.Price)` | `$orderby=Price desc` |
+| `.Skip(10)` | `$skip=10` |
+| `.Take(20)` | `$top=20` |
+| `.Select(p => new { p.Name, p.Price })` | `$select=Name,Price` |
+| `.Expand(o => o.Product)` | `$expand=Product` |
 
-| LINQ | OData |
-|------|-------|
-| `Where(x => x.Price > 10)` | `$filter=Price gt 10` |
-| `OrderBy(x => x.Name)` | `$orderby=Name asc` |
-| `OrderByDescending(x => x.Price)` | `$orderby=Price desc` |
-| `Skip(10)` | `$skip=10` |
-| `Take(20)` | `$top=20` |
-| `Select(x => new { x.Name })` | `$select=Name` |
-| `Expand(x => x.Orders)` | `$expand=Orders` |
+String methods work too:
+- `.Where(p => p.Name.StartsWith("A"))` → `startswith(Name, 'A')`
+- `.Where(p => p.Name.EndsWith("Z"))` → `endswith(Name, 'Z')`  
+- `.Where(p => p.Name.Contains("mid"))` → `contains(Name, 'mid')`
 
-## Supported OData Types
+## 🛠️ Advanced Features
 
-The generator maps OData types to C# types:
+Need more control? The tool supports advanced scenarios:
 
-| OData Type | C# Type |
-|------------|---------|
-| Edm.String | string |
-| Edm.Int32 | int |
-| Edm.Int64 | long |
-| Edm.Boolean | bool |
-| Edm.Decimal | decimal |
-| Edm.Double | double |
-| Edm.DateTime | DateTime |
-| Edm.DateTimeOffset | DateTimeOffset |
-| Edm.Guid | Guid |
-| Collection(T) | List&lt;T&gt; |
+### Attribute-Based Customization
 
-## Example Metadata
+After generating the initial client, you can customize it:
 
-See `tests/Forge.OData.Sample/SampleMetadata.xml` for an example OData metadata file.
+```csharp
+using Forge.OData.Attributes;
 
-## Testing with Forge.OData.Service
-
-The solution includes **Forge.OData.Service**, a simple ASP.NET Core Web API project with OData endpoints and sample data for testing and validating the library.
-
-### Running the OData Service
-
-```bash
-dotnet run --project tests/Forge.OData.Service/Forge.OData.Service.csproj
+namespace MyApp.Services
+{
+    [ODataClient(
+        MetadataFile = "ApiMetadata.xml",
+        Endpoint = "https://api.example.com/odata"
+    )]
+    public partial class ApiClient
+    {
+        // Add your custom methods
+        public async Task<Product?> GetFeaturedProductAsync()
+        {
+            var results = await Products
+                .Where(p => p.Featured)
+                .OrderByDescending(p => p.Rating)
+                .Take(1)
+                .ToListAsync();
+            
+            return results.FirstOrDefault();
+        }
+        
+        // Add custom properties
+        public string ServiceVersion => "v2.0";
+    }
+}
 ```
 
-The service will start on `http://localhost:5000` and provides:
-- OData metadata endpoint: `http://localhost:5000/odata/$metadata`
-- Sample data for Products, Orders, and Customers
-- Full OData query support ($filter, $select, $expand, $orderby, etc.)
+### Working with Multiple Environments
 
-See [Forge.OData.Service README](tests/Forge.OData.Service/README.md) for more details and example queries.
+```csharp
+// Development
+var devClient = new ApiClient(
+    httpClient, 
+    "https://dev-api.example.com/odata"
+);
 
-## Building the Solution
-
-```bash
-dotnet build Forge.OData.Client.sln
+// Production
+var prodClient = new ApiClient(
+    httpClient, 
+    "https://api.example.com/odata"
+);
 ```
 
-## Running the Sample
+## 📚 More Information
 
-```bash
-dotnet run --project tests/Forge.OData.Sample/Forge.OData.Sample.csproj
-```
+- **Technical documentation**: See [CONTRIBUTE.md](CONTRIBUTE.md) for detailed architecture, project structure, and contribution guidelines
+- **Examples**: Check the `sample/` directory for working examples
+- **Changelog**: See [CHANGELOG.md](CHANGELOG.md) for version history
 
-## License
+## 🤝 Contributing
+
+We welcome contributions! Please see [CONTRIBUTE.md](CONTRIBUTE.md) for detailed information on:
+- Project architecture and structure
+- Development setup
+- Building and testing
+- Code generation workflow
+- Contribution guidelines
+
+## 📄 License
 
 MIT
+
+
 
