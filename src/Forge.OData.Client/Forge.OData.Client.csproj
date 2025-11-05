@@ -8,24 +8,34 @@
   </PropertyGroup>
 
   <!-- Build Forge.OData.Attributes and Forge.OData.Generator before packing -->
-  <Target Name="BuildOtherProjects" BeforeTargets="Pack">
+  <Target Name="BuildOtherProjects" BeforeTargets="GenerateNuspec">
     <MSBuild Projects="..\Forge.OData.Attributes\Forge.OData.Attributes.csproj" Targets="Build" Properties="Configuration=$(Configuration)" />
     <MSBuild Projects="..\Forge.OData.Generator\Forge.OData.Generator.csproj" Targets="Build" Properties="Configuration=$(Configuration)" />
   </Target>
 
   <!-- Include analyzer/generator DLLs in the NuGet package -->
-  <ItemGroup>
-    <!-- Include Forge.OData.Attributes DLL and PDB -->
-    <None Include="..\Forge.OData.Attributes\bin\$(Configuration)\net9.0\Forge.OData.Attributes.dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
-    <None Include="..\Forge.OData.Attributes\bin\$(Configuration)\net9.0\Forge.OData.Attributes.pdb"
-          Pack="true"
-          PackagePath="analyzers/dotnet/cs" Condition="Exists('..\Forge.OData.Attributes\bin\$(Configuration)\net9.0\Forge.OData.Attributes.pdb')" />
-    
-    <!-- Include Forge.OData.Generator DLL and PDB -->
-    <None Include="..\Forge.OData.Generator\bin\$(Configuration)\netstandard2.0\Forge.OData.Generator.dll" Pack="true" PackagePath="analyzers/dotnet/cs" />
-    <None Include="..\Forge.OData.Generator\bin\$(Configuration)\netstandard2.0\Forge.OData.Generator.pdb"
-          Pack="true"
-          PackagePath="analyzers/dotnet/cs" Condition="Exists('..\Forge.OData.Generator\bin\$(Configuration)\netstandard2.0\Forge.OData.Generator.pdb')" />
-  </ItemGroup>
+  <Target Name="IncludeAnalyzersInPack" BeforeTargets="GenerateNuspec" DependsOnTargets="BuildOtherProjects">
+    <ItemGroup>
+      <!-- Include Forge.OData.Attributes DLL and PDB -->
+      <_PackageFiles Include="..\Forge.OData.Attributes\bin\$(Configuration)\net9.0\Forge.OData.Attributes.dll">
+        <PackagePath>analyzers/dotnet/cs</PackagePath>
+        <Pack>true</Pack>
+      </_PackageFiles>
+      <_PackageFiles Include="..\Forge.OData.Attributes\bin\$(Configuration)\net9.0\Forge.OData.Attributes.pdb" Condition="Exists('..\Forge.OData.Attributes\bin\$(Configuration)\net9.0\Forge.OData.Attributes.pdb')">
+        <PackagePath>analyzers/dotnet/cs</PackagePath>
+        <Pack>true</Pack>
+      </_PackageFiles>
+      
+      <!-- Include Forge.OData.Generator DLL and PDB -->
+      <_PackageFiles Include="..\Forge.OData.Generator\bin\$(Configuration)\netstandard2.0\Forge.OData.Generator.dll">
+        <PackagePath>analyzers/dotnet/cs</PackagePath>
+        <Pack>true</Pack>
+      </_PackageFiles>
+      <_PackageFiles Include="..\Forge.OData.Generator\bin\$(Configuration)\netstandard2.0\Forge.OData.Generator.pdb" Condition="Exists('..\Forge.OData.Generator\bin\$(Configuration)\netstandard2.0\Forge.OData.Generator.pdb')">
+        <PackagePath>analyzers/dotnet/cs</PackagePath>
+        <Pack>true</Pack>
+      </_PackageFiles>
+    </ItemGroup>
+  </Target>
 
 </Project>

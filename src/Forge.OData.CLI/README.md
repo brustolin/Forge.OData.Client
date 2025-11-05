@@ -119,7 +119,7 @@ dotnet odata add --endpoint https://api.example.com/odata \
 - Your project must reference:
   - `Forge.OData.Attributes`
   - `Forge.OData.Generator` (as analyzer)
-  - `Forge.OData.Client.Core`
+  - `Forge.OData.Client`
 
 ## How It Works
 
