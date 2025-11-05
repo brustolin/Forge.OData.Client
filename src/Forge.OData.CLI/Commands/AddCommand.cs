@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using Forge.OData.CLI.Utilities;
@@ -15,6 +16,9 @@ public static class AddCommand
             // Find the project file
             var project = ProjectHelper.FindProjectFile(projectPath);
             Console.WriteLine($"Using project: {project}");
+
+            // Ensure the project has a reference to Forge.OData.Client
+            EnsureODataClientPackageReference(project);
 
             // Download metadata from endpoint
             Console.WriteLine("Downloading metadata...");
@@ -259,5 +263,40 @@ namespace {namespaceName}
     }}
 }}
 ";
+    }
+
+    private static void EnsureODataClientPackageReference(string projectPath)
+    {
+        const string packageId = "Forge.OData.Client";
+        
+        // Check if the package reference already exists
+        if (ProjectFileEditor.HasPackageReference(projectPath, packageId))
+        {
+            Console.WriteLine($"✓ Project already has a reference to {packageId}");
+            return;
+        }
+
+        // Get the version of the CLI tool
+        var cliVersion = GetCliVersion();
+        
+        Console.WriteLine($"Adding {packageId} package reference (version {cliVersion})...");
+        ProjectFileEditor.AddPackageReference(projectPath, packageId, cliVersion);
+        Console.WriteLine($"✓ Added {packageId} package reference");
+    }
+
+    private static string GetCliVersion()
+    {
+        // Get the version from the assembly
+        var assembly = Assembly.GetExecutingAssembly();
+        var version = assembly.GetName().Version;
+        
+        if (version != null)
+        {
+            // Return version in format "Major.Minor.Build" (e.g., "0.0.2")
+            return $"{version.Major}.{version.Minor}.{version.Build}";
+        }
+        
+        // Fallback to a default version if unable to determine
+        return "0.0.2";
     }
 }
