@@ -239,6 +239,7 @@ Use conventional commits format:
 5. ✅ Use meaningful commit messages
 6. ✅ Keep changes focused and minimal
 7. ✅ Follow existing code patterns and conventions
+8. ✅ If code was changed, write a short description  in the CHANGELOG under the [Unreleased] section.
 
 ## Release Process
 
