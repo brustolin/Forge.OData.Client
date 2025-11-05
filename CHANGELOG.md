@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.0.2] - 2025-11-05
 
 ### Forge.OData.Client
 A .NET 9 OData client utility library providing:
