@@ -5,7 +5,28 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <IsPackable>true</IsPackable>
+    
+    <!-- Package Metadata -->
+    <PackageId>Forge.OData.Client</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>Dhiogo Brustolin</Authors>
+    <Company>Brustolin</Company>
+    <Product>Forge.OData.Client</Product>
+    <Description>A .NET 9 OData client with source generator that automatically generates model classes and client code from OData $metadata XML files. Features include type-safe client, LINQ to OData translation, attribute-based generation, and performance optimized JSON converters.</Description>
+    <PackageTags>odata;odata-client;source-generator;linq;rest-api;code-generation;net9;roslyn;json-converter</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/brustolin/Forge.OData.Client</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/brustolin/Forge.OData.Client</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Copyright>Copyright (c) 2025 brustolin</Copyright>
+    <PackageReleaseNotes>Initial release with OData client generation from metadata, LINQ to OData support, and source generators.</PackageReleaseNotes>
   </PropertyGroup>
+  
+  <!-- Include README in package -->
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
   <!-- Build Forge.OData.Attributes and Forge.OData.Generator before packing -->
   <Target Name="BuildOtherProjects" BeforeTargets="GenerateNuspec">
