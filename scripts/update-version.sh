@@ -41,6 +41,16 @@ else
     sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.CLI/Forge.OData.CLI.csproj
 fi
 
+# Update ODataClientVersion constant in AddCommand.cs
+echo "  Updating AddCommand.cs ODataClientVersion..."
+if [[ "$(uname)" == "Darwin" ]]; then
+    # BSD sed (macOS)
+    sed -i '' "s|private const string ODataClientVersion = \".*\";|private const string ODataClientVersion = \"$VERSION\";|g" src/Forge.OData.CLI/Commands/AddCommand.cs
+else
+    # GNU sed (Linux)
+    sed -i "s|private const string ODataClientVersion = \".*\";|private const string ODataClientVersion = \"$VERSION\";|g" src/Forge.OData.CLI/Commands/AddCommand.cs
+fi
+
 # Update README.md installation instructions
 echo "  Updating README.md..."
 # Update the Forge.OData.CLI installation command (if version is explicitly mentioned)
@@ -74,4 +84,5 @@ echo ""
 echo "Updated files:"
 echo "  - src/Forge.OData.Client/Forge.OData.Client.csproj"
 echo "  - src/Forge.OData.CLI/Forge.OData.CLI.csproj"
+echo "  - src/Forge.OData.CLI/Commands/AddCommand.cs"
 echo "  - CHANGELOG.md"

@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using Forge.OData.CLI.Utilities;
@@ -7,6 +6,10 @@ namespace Forge.OData.CLI.Commands;
 
 public static class AddCommand
 {
+    // Version of the Forge.OData.Client package to reference
+    // This is updated during release by the update-version.sh script
+    private const string ODataClientVersion = "0.0.2";
+
     public static async Task Execute(string endpoint, string? projectPath, string? clientName, string? outputPath, string? namespaceName)
     {
         try
@@ -276,30 +279,8 @@ namespace {namespaceName}
             return;
         }
 
-        // Get the version of the CLI tool
-        var cliVersion = GetCliVersion();
-        
-        Console.WriteLine($"Adding {packageId} package reference (version {cliVersion})...");
-        ProjectFileEditor.AddPackageReference(projectPath, packageId, cliVersion);
+        Console.WriteLine($"Adding {packageId} package reference (version {ODataClientVersion})...");
+        ProjectFileEditor.AddPackageReference(projectPath, packageId, ODataClientVersion);
         Console.WriteLine($"✓ Added {packageId} package reference");
-    }
-
-    private static string GetCliVersion()
-    {
-        // Get the version from the assembly
-        var assembly = Assembly.GetExecutingAssembly();
-        var version = assembly.GetName().Version;
-        
-        if (version != null)
-        {
-            // Handle case where Build might be -1 (not specified)
-            var build = version.Build >= 0 ? version.Build : 0;
-            
-            // Return version in format "Major.Minor.Build" (e.g., "0.0.2")
-            return $"{version.Major}.{version.Minor}.{build}";
-        }
-        
-        // Fallback to a default version if unable to determine
-        return "0.0.2";
     }
 }
