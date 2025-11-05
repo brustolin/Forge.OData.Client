@@ -8,97 +8,53 @@ public class AddCommandTests
     [Fact]
     public void DeriveNamespaceFromPath_WithEmptyPath_ReturnsProjectName()
     {
-        // Arrange
-        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(tempDir);
-        var projectPath = Path.Combine(tempDir, "MyProject.csproj");
-        File.WriteAllText(projectPath, "<Project Sdk=\"Microsoft.NET.Sdk\"></Project>");
-
-        try
+        // Arrange & Act
+        var result = WithTempProject("MyProject", projectDir =>
         {
-            // Act
-            var result = InvokeDeriveNamespaceFromPath(tempDir, "");
+            return InvokeDeriveNamespaceFromPath(projectDir, "");
+        });
 
-            // Assert
-            Assert.Equal("MyProject", result);
-        }
-        finally
-        {
-            // Cleanup
-            Directory.Delete(tempDir, true);
-        }
+        // Assert
+        Assert.Equal("MyProject", result);
     }
 
     [Fact]
     public void DeriveNamespaceFromPath_WithSingleFolder_ReturnsCombinedNamespace()
     {
-        // Arrange
-        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(tempDir);
-        var projectPath = Path.Combine(tempDir, "MyProject.csproj");
-        File.WriteAllText(projectPath, "<Project Sdk=\"Microsoft.NET.Sdk\"></Project>");
-
-        try
+        // Arrange & Act
+        var result = WithTempProject("MyProject", projectDir =>
         {
-            // Act
-            var result = InvokeDeriveNamespaceFromPath(tempDir, "odata");
+            return InvokeDeriveNamespaceFromPath(projectDir, "odata");
+        });
 
-            // Assert
-            Assert.Equal("MyProject.odata", result);
-        }
-        finally
-        {
-            // Cleanup
-            Directory.Delete(tempDir, true);
-        }
+        // Assert
+        Assert.Equal("MyProject.odata", result);
     }
 
     [Fact]
     public void DeriveNamespaceFromPath_WithNestedFolders_ReturnsDottedNamespace()
     {
-        // Arrange
-        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(tempDir);
-        var projectPath = Path.Combine(tempDir, "MyProject.csproj");
-        File.WriteAllText(projectPath, "<Project Sdk=\"Microsoft.NET.Sdk\"></Project>");
-
-        try
+        // Arrange & Act
+        var result = WithTempProject("MyProject", projectDir =>
         {
-            // Act
-            var result = InvokeDeriveNamespaceFromPath(tempDir, "odata/clients");
+            return InvokeDeriveNamespaceFromPath(projectDir, "odata/clients");
+        });
 
-            // Assert
-            Assert.Equal("MyProject.odata.clients", result);
-        }
-        finally
-        {
-            // Cleanup
-            Directory.Delete(tempDir, true);
-        }
+        // Assert
+        Assert.Equal("MyProject.odata.clients", result);
     }
 
     [Fact]
     public void DeriveNamespaceFromPath_WithBackslashes_ReturnsDottedNamespace()
     {
-        // Arrange
-        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-        Directory.CreateDirectory(tempDir);
-        var projectPath = Path.Combine(tempDir, "MyProject.csproj");
-        File.WriteAllText(projectPath, "<Project Sdk=\"Microsoft.NET.Sdk\"></Project>");
-
-        try
+        // Arrange & Act
+        var result = WithTempProject("MyProject", projectDir =>
         {
-            // Act
-            var result = InvokeDeriveNamespaceFromPath(tempDir, "odata\\clients");
+            return InvokeDeriveNamespaceFromPath(projectDir, "odata\\clients");
+        });
 
-            // Assert
-            Assert.Equal("MyProject.odata.clients", result);
-        }
-        finally
-        {
-            // Cleanup
-            Directory.Delete(tempDir, true);
-        }
+        // Assert
+        Assert.Equal("MyProject.odata.clients", result);
     }
 
     [Fact]
@@ -115,6 +71,25 @@ public class AddCommandTests
 
             // Assert
             Assert.Equal("ODataClients.odata", result);
+        }
+        finally
+        {
+            // Cleanup
+            Directory.Delete(tempDir, true);
+        }
+    }
+
+    // Helper method to create a temporary project directory and clean it up
+    private static T WithTempProject<T>(string projectName, Func<string, T> action)
+    {
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+        var projectPath = Path.Combine(tempDir, $"{projectName}.csproj");
+        File.WriteAllText(projectPath, "<Project Sdk=\"Microsoft.NET.Sdk\"></Project>");
+
+        try
+        {
+            return action(tempDir);
         }
         finally
         {

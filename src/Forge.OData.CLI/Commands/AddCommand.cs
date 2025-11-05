@@ -179,6 +179,9 @@ public static class AddCommand
         
         if (projectFiles.Length > 0)
         {
+            // If there's only one project file, use it
+            // If there are multiple, use the first one (alphabetically)
+            // This matches the behavior of ProjectHelper.FindProjectFile when no specific project is provided
             projectName = Path.GetFileNameWithoutExtension(projectFiles[0]);
         }
 
