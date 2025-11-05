@@ -5,7 +5,7 @@ namespace Forge.OData.CLI.Commands;
 
 public static class AddCommand
 {
-    public static async Task Execute(string endpoint, string? projectPath, string? clientName)
+    public static async Task Execute(string endpoint, string? projectPath, string? clientName, string? outputPath, string? namespaceName)
     {
         try
         {
@@ -44,21 +44,66 @@ public static class AddCommand
             // Generate client class file
             var clientClassName = effectiveClientName;
             var clientFileName = $"{clientClassName}.cs";
-            var clientFilePath = Path.Combine(projectDir, clientFileName);
-
-            if (File.Exists(clientFilePath))
+            
+            // Determine the output directory
+            string outputDirectory;
+            string relativeOutputPath;
+            if (!string.IsNullOrWhiteSpace(outputPath))
             {
-                Console.WriteLine($"Warning: File {clientFileName} already exists. Skipping class generation.");
+                // Use the specified output path (relative to project directory)
+                outputDirectory = Path.Combine(projectDir, outputPath);
+                relativeOutputPath = outputPath;
+                
+                // Create the directory if it doesn't exist
+                if (!Directory.Exists(outputDirectory))
+                {
+                    Directory.CreateDirectory(outputDirectory);
+                    Console.WriteLine($"Created directory: {outputPath}");
+                }
             }
             else
             {
-                var clientCode = GenerateClientClass(clientClassName, metadataFileName, endpoint);
+                // Default to project directory
+                outputDirectory = projectDir;
+                relativeOutputPath = string.Empty;
+            }
+            
+            var clientFilePath = Path.Combine(outputDirectory, clientFileName);
+            var relativeClientFilePath = string.IsNullOrWhiteSpace(relativeOutputPath) 
+                ? clientFileName 
+                : Path.Combine(relativeOutputPath, clientFileName);
+            
+            // Determine the namespace
+            string effectiveNamespace;
+            if (!string.IsNullOrWhiteSpace(namespaceName))
+            {
+                // Use the explicitly specified namespace
+                effectiveNamespace = namespaceName;
+            }
+            else if (!string.IsNullOrWhiteSpace(relativeOutputPath))
+            {
+                // Derive namespace from the relative output path
+                effectiveNamespace = DeriveNamespaceFromPath(projectDir, relativeOutputPath);
+            }
+            else
+            {
+                // Use default namespace
+                effectiveNamespace = "ODataClients";
+            }
+
+            if (File.Exists(clientFilePath))
+            {
+                Console.WriteLine($"Warning: File {relativeClientFilePath} already exists. Skipping class generation.");
+            }
+            else
+            {
+                var clientCode = GenerateClientClass(clientClassName, metadataFileName, endpoint, effectiveNamespace);
                 await File.WriteAllTextAsync(clientFilePath, clientCode);
-                Console.WriteLine($"Generated client class: {clientFileName}");
+                Console.WriteLine($"Generated client class: {relativeClientFilePath}");
 
                 // Add client class to project
-                ProjectFileEditor.AddCompileFile(project, clientFileName);
-                Console.WriteLine($"Added {clientFileName} to project");
+                ProjectFileEditor.AddCompileFile(project, relativeClientFilePath);
+                Console.WriteLine($"Added {relativeClientFilePath} to project");
             }
 
             Console.WriteLine();
@@ -126,14 +171,37 @@ public static class AddCommand
         return string.IsNullOrEmpty(result) ? "OData" : result;
     }
 
-    private static string GenerateClientClass(string className, string metadataFile, string endpoint)
+    private static string DeriveNamespaceFromPath(string projectDir, string relativePath)
     {
-        // Get the namespace from the current directory or use a default
-        var defaultNamespace = "ODataClients";
+        // Get the project name from the .csproj file
+        var projectFiles = Directory.GetFiles(projectDir, "*.csproj");
+        string projectName = "ODataClients";
+        
+        if (projectFiles.Length > 0)
+        {
+            projectName = Path.GetFileNameWithoutExtension(projectFiles[0]);
+        }
 
+        // Normalize the path separators and split
+        var normalizedPath = relativePath.Replace('\\', '.').Replace('/', '.');
+        
+        // Remove leading/trailing dots
+        normalizedPath = normalizedPath.Trim('.');
+        
+        // Combine project name with path
+        if (string.IsNullOrWhiteSpace(normalizedPath))
+        {
+            return projectName;
+        }
+        
+        return $"{projectName}.{normalizedPath}";
+    }
+
+    private static string GenerateClientClass(string className, string metadataFile, string endpoint, string namespaceName)
+    {
         return $@"using Forge.OData.Attributes;
 
-namespace {defaultNamespace}
+namespace {namespaceName}
 {{
     /// <summary>
     /// OData client for {endpoint}

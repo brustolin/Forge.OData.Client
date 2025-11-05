@@ -23,14 +23,22 @@ class Program
         var clientNameOption = new Option<string?>(
             aliases: ["--client-name", "-n"],
             description: "Name for the generated client class");
+        var outputPathOption = new Option<string?>(
+            aliases: ["--output-path", "-o"],
+            description: "Path where the generated client class should be saved (relative to project directory)");
+        var namespaceOption = new Option<string?>(
+            aliases: ["--namespace", "-ns"],
+            description: "Namespace for the generated client class (if not specified, derived from output path)");
 
         addCommand.AddOption(endpointOption);
         addCommand.AddOption(projectOption);
         addCommand.AddOption(clientNameOption);
-        addCommand.SetHandler(async (endpoint, project, clientName) =>
+        addCommand.AddOption(outputPathOption);
+        addCommand.AddOption(namespaceOption);
+        addCommand.SetHandler(async (endpoint, project, clientName, outputPath, ns) =>
         {
-            await AddCommand.Execute(endpoint, project, clientName);
-        }, endpointOption, projectOption, clientNameOption);
+            await AddCommand.Execute(endpoint, project, clientName, outputPath, ns);
+        }, endpointOption, projectOption, clientNameOption, outputPathOption, namespaceOption);
 
         // Update command
         var updateCommand = new Command("update", "Update OData metadata from the server");
