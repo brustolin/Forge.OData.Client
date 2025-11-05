@@ -91,8 +91,12 @@ public static class ProjectFileEditor
         var doc = XDocument.Load(projectPath);
         var project = doc.Root ?? throw new InvalidOperationException("Invalid project file");
 
-        // Check if the package already exists
-        if (HasPackageReference(projectPath, packageId))
+        // Check if the package already exists in the loaded document
+        var existingPackage = project.Elements("ItemGroup")
+            .SelectMany(g => g.Elements("PackageReference"))
+            .FirstOrDefault(e => e.Attribute("Include")?.Value == packageId);
+
+        if (existingPackage != null)
         {
             // Package already exists, no need to add
             return;

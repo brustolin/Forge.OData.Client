@@ -292,8 +292,11 @@ namespace {namespaceName}
         
         if (version != null)
         {
+            // Handle case where Build might be -1 (not specified)
+            var build = version.Build >= 0 ? version.Build : 0;
+            
             // Return version in format "Major.Minor.Build" (e.g., "0.0.2")
-            return $"{version.Major}.{version.Minor}.{version.Build}";
+            return $"{version.Major}.{version.Minor}.{build}";
         }
         
         // Fallback to a default version if unable to determine
