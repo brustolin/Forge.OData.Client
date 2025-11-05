@@ -121,3 +121,7 @@ jobs:
             A GitHub release has been created with tag
             v${{ inputs.version }}.
           delete-branch: false
+
+      - name: Delete temporary release branch
+        run: |
+          git push origin --delete release/${{ inputs.version }}
