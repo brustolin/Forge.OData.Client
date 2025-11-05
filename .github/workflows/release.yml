@@ -123,5 +123,6 @@ jobs:
           delete-branch: false
 
       - name: Delete temporary release branch
+        if: success()
         run: |
           git push origin --delete release/${{ inputs.version }}
