@@ -42,6 +42,8 @@ This will:
 - `--endpoint, -e` (required): The OData service endpoint URL
 - `--client-name, -n` (optional): Name for the client class (auto-generated if not specified)
 - `--project, -p` (optional): Path to project file (defaults to current directory)
+- `--output-path, -o` (optional): Path where the generated client class should be saved (relative to project directory)
+- `--namespace, -ns` (optional): Namespace for the generated client class (if not specified, derived from output path)
 
 ### Updating Metadata
 
@@ -78,6 +80,37 @@ dotnet odata update
 
 # Rebuild to regenerate with updated metadata
 dotnet build
+```
+
+## Advanced Usage
+
+### Organizing Clients in Subdirectories
+
+Place generated client classes in a specific directory and automatically derive the namespace:
+
+```bash
+# Creates: MyProject/OData/Clients/ApiClient.cs
+# Namespace: MyProject.OData.Clients
+dotnet odata add --endpoint https://api.example.com/odata --client-name ApiClient --output-path OData/Clients
+```
+
+### Custom Namespace
+
+Specify a custom namespace for the generated client class:
+
+```bash
+# Uses namespace: MyCompany.Services.OData
+dotnet odata add --endpoint https://api.example.com/odata --client-name ApiClient --namespace MyCompany.Services.OData
+```
+
+### Combining Output Path and Namespace
+
+```bash
+# Creates file in Services/OData directory with custom namespace
+dotnet odata add --endpoint https://api.example.com/odata \
+  --client-name ApiClient \
+  --output-path Services/OData \
+  --namespace MyCompany.ExternalServices
 ```
 
 ## Requirements
