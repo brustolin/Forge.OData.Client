@@ -13,9 +13,9 @@
     <Description>CLI tool for managing OData metadata in projects. Supports adding and updating OData service metadata files, similar to how dotnet ef manages migrations.</Description>
     
     <!-- NuGet Package Metadata -->
-    <Version>1.0.0</Version>
-    <Authors>Forge.OData Contributors</Authors>
-    <Company>Forge.OData</Company>
+    <Version>0.0.1</Version>
+    <Authors>Dhiogo Brustolin</Authors>
+    <Company>Brustolin</Company>
     <Product>Forge.OData.CLI</Product>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageProjectUrl>https://github.com/brustolin/Forge.OData.Client</PackageProjectUrl>
@@ -23,7 +23,7 @@
     <RepositoryType>git</RepositoryType>
     <PackageTags>odata;cli;dotnet-tool;code-generator;source-generator</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Copyright>Copyright © 2024 Forge.OData Contributors</Copyright>
+    <Copyright>Copyright © 2025 Brustolin</Copyright>
     <PackageReleaseNotes>Initial release of Forge.OData.CLI as a .NET tool</PackageReleaseNotes>
     
     <!-- Suppress known vulnerabilities in required dependencies -->
