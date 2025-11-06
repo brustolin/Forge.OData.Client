@@ -31,14 +31,14 @@ else
     sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.Client/Forge.OData.Client.csproj
 fi
 
-# Update Forge.OData.CLI project version
-echo "  Updating Forge.OData.CLI.csproj..."
+# Update Forge.OData.CLI nuspec version
+echo "  Updating Forge.OData.CLI nuspec..."
 if [[ "$(uname)" == "Darwin" ]]; then
     # BSD sed (macOS) requires an explicit empty backup suffix for in-place edits
-    sed -i '' "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.CLI/Forge.OData.CLI.csproj
+    sed -i '' "s|<version>.*</version>|<version>$VERSION</version>|g" src/Forge.OData.CLI/dotnet-odata.nuspec
 else
     # GNU sed (Linux)
-    sed -i "s|<Version>.*</Version>|<Version>$VERSION</Version>|g" src/Forge.OData.CLI/Forge.OData.CLI.csproj
+    sed -i "s|<version>.*</version>|<version>$VERSION</version>|g" src/Forge.OData.CLI/dotnet-odata.nuspec
 fi
 
 # Update ODataClientVersion constant in AddCommand.cs
