@@ -16,7 +16,7 @@
 
 		<!-- NuGet package metadata -->
 		<PackageId>Forge.OData.CLI</PackageId>
-		<Version>0.1.0-beta.1</Version>
+		<Version>0.1.0-beta.2</Version>
 		<Authors>Dhiogo Brustolin</Authors>
 		<Company>Brustolin</Company>
 		<Product>Forge.OData.CLI</Product>

@@ -8,7 +8,7 @@ public static class AddCommand
 {
     // Version of the Forge.OData.Client package to reference
     // This is updated during release by the update-version.sh script
-    private const string ODataClientVersion = "0.1.0-beta.1";
+    private const string ODataClientVersion = "0.1.0-beta.2";
 
     public static async Task Execute(string endpoint, string? projectPath, string? clientName, string? outputPath, string? namespaceName)
     {
