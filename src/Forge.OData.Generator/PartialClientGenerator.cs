@@ -36,9 +36,10 @@ namespace Forge.OData.Generator
             // Add to namespace
             namespaceDeclaration = namespaceDeclaration.AddMembers(classDeclaration);
 
-            // Create compilation unit
+            // Create compilation unit with #nullable enable directive
             var compilationUnit = CompilationUnit()
                 .AddMembers(namespaceDeclaration)
+                .WithLeadingTrivia(ParseLeadingTrivia("#nullable enable\n"))
                 .NormalizeWhitespace();
 
             return compilationUnit.ToFullString();

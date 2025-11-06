@@ -58,9 +58,10 @@ namespace Forge.OData.Generator
             // Add to namespace
             namespaceDeclaration = namespaceDeclaration.AddMembers(classDeclaration);
 
-            // Create compilation unit
+            // Create compilation unit with #nullable enable directive
             var compilationUnit = CompilationUnit()
                 .AddMembers(namespaceDeclaration)
+                .WithLeadingTrivia(ParseLeadingTrivia("#nullable enable\n"))
                 .NormalizeWhitespace();
 
             return compilationUnit.ToFullString();
@@ -147,11 +148,16 @@ namespace Forge.OData.Generator
                         VariableDeclarator(Identifier("propertyName"))
                             .WithInitializer(
                                 EqualsValueClause(
-                                    InvocationExpression(
-                                        MemberAccessExpression(
-                                            SyntaxKind.SimpleMemberAccessExpression,
-                                            IdentifierName("reader"),
-                                            IdentifierName("GetString"))))))));
+                                    BinaryExpression(
+                                        SyntaxKind.CoalesceExpression,
+                                        InvocationExpression(
+                                            MemberAccessExpression(
+                                                SyntaxKind.SimpleMemberAccessExpression,
+                                                IdentifierName("reader"),
+                                                IdentifierName("GetString"))),
+                                        LiteralExpression(
+                                            SyntaxKind.StringLiteralExpression,
+                                            Literal(""))))))));
 
             // reader.Read();
             whileBody.Add(
@@ -258,8 +264,41 @@ namespace Forge.OData.Generator
             var statements = new List<StatementSyntax>();
 
             var typeName = MapNavigationType(navProperty.Type, navProperty.Nullable);
+            var isCollection = typeName.StartsWith("List<");
+            
+            // result.NavProperty = JsonSerializer.Deserialize<Type>(ref reader, options) ?? <default>;
+            ExpressionSyntax deserializeExpression = InvocationExpression(
+                MemberAccessExpression(
+                    SyntaxKind.SimpleMemberAccessExpression,
+                    IdentifierName("JsonSerializer"),
+                    GenericName(
+                        Identifier("Deserialize"))
+                    .WithTypeArgumentList(
+                        TypeArgumentList(
+                            SingletonSeparatedList(ParseTypeName(typeName))))))
+                .AddArgumentListArguments(
+                    Argument(IdentifierName("reader"))
+                        .WithRefOrOutKeyword(Token(SyntaxKind.RefKeyword)),
+                    Argument(IdentifierName("options")));
 
-            // result.NavProperty = JsonSerializer.Deserialize<Type>(ref reader, options);
+            // Collections are never nullable in C# - add null-coalescing to empty list
+            // Single navigation properties may be nullable (ending with ?)
+            if (isCollection)
+            {
+                // Get the inner type for the collection
+                var innerType = typeName.Substring(5, typeName.Length - 6); // Remove "List<" and ">"
+                deserializeExpression = BinaryExpression(
+                    SyntaxKind.CoalesceExpression,
+                    deserializeExpression,
+                    ObjectCreationExpression(
+                        GenericName(
+                            Identifier("List"))
+                        .WithTypeArgumentList(
+                            TypeArgumentList(
+                                SingletonSeparatedList(ParseTypeName(innerType)))))
+                        .WithArgumentList(ArgumentList()));
+            }
+
             statements.Add(
                 ExpressionStatement(
                     AssignmentExpression(
@@ -268,19 +307,7 @@ namespace Forge.OData.Generator
                             SyntaxKind.SimpleMemberAccessExpression,
                             IdentifierName("result"),
                             IdentifierName(navProperty.Name)),
-                        InvocationExpression(
-                            MemberAccessExpression(
-                                SyntaxKind.SimpleMemberAccessExpression,
-                                IdentifierName("JsonSerializer"),
-                                GenericName(
-                                    Identifier("Deserialize"))
-                                .WithTypeArgumentList(
-                                    TypeArgumentList(
-                                        SingletonSeparatedList(ParseTypeName(typeName))))))
-                        .AddArgumentListArguments(
-                            Argument(IdentifierName("reader"))
-                                .WithRefOrOutKeyword(Token(SyntaxKind.RefKeyword)),
-                            Argument(IdentifierName("options"))))));
+                        deserializeExpression)));
 
             statements.Add(BreakStatement());
 
@@ -336,6 +363,21 @@ namespace Forge.OData.Generator
                             SyntaxKind.SimpleMemberAccessExpression,
                             IdentifierName("reader"),
                             IdentifierName(readerMethodName))));
+            }
+            
+            // For strings, use null-coalescing operator to handle null
+            if (baseType == "String")
+            {
+                return BinaryExpression(
+                    SyntaxKind.CoalesceExpression,
+                    InvocationExpression(
+                        MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            IdentifierName("reader"),
+                            IdentifierName(readerMethodName))),
+                    LiteralExpression(
+                        SyntaxKind.StringLiteralExpression,
+                        Literal("")));
             }
             
             return InvocationExpression(
