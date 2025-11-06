@@ -1,5 +1,14 @@
 # Changelog
 
+## [Unreleased]
+### Forge.OData.Generator
+- Add `#nullable enable` directive to all generated files to resolve CS8669 warnings
+- Add null-coalescing operator for string properties to handle nullable return from `GetString()`
+- Add null-coalescing operator for collection navigation properties to prevent null assignment to non-nullable List properties
+
+### Release Workflow
+- Fix release workflow to attach NuGet packages (.nupkg files) to GitHub releases as assets
+
 ## [0.1.0] - 2025-11-06
 ### Forge.OData.CLI
 - **add command**: Now automatically verifies and adds Forge.OData.Client NuGet package reference to the project if not already present, using the same version as the CLI tool
