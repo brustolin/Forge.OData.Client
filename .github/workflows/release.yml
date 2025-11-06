@@ -94,11 +94,12 @@ jobs:
           dotnet pack src/Forge.OData.CLI/Forge.OData.CLI.csproj \
             --configuration Release --no-build --output ./artifacts
 
-      - name: Upload NuGet packages as release artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: nuget-packages
-          path: ./artifacts/*.nupkg
+      - name: Upload NuGet packages to GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ inputs.version }}"
+          gh release upload "v$VERSION" ./artifacts/*.nupkg
 
       - name: NuGet login (OIDC → temp API key)
         uses: NuGet/login@v1
