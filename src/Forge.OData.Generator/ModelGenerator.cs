@@ -107,6 +107,7 @@ namespace Forge.OData.Generator
                         .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
 
             // For non-nullable reference types (string, byte[]), add null-forgiving operator to suppress CS8618
+            // (non-nullable property must contain a non-null value when exiting constructor)
             if (isNonNullableString)
             {
                 propertyDeclaration = propertyDeclaration.WithInitializer(
