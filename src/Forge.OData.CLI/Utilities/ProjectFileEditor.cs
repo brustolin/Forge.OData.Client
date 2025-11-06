@@ -72,4 +72,52 @@ public static class ProjectFileEditor
 
         doc.Save(projectPath);
     }
+
+    public static bool HasPackageReference(string projectPath, string packageId)
+    {
+        var doc = XDocument.Load(projectPath);
+        var project = doc.Root ?? throw new InvalidOperationException("Invalid project file");
+
+        // Check if the package already exists in any PackageReference
+        var existingPackage = project.Elements("ItemGroup")
+            .SelectMany(g => g.Elements("PackageReference"))
+            .FirstOrDefault(e => e.Attribute("Include")?.Value == packageId);
+
+        return existingPackage != null;
+    }
+
+    public static void AddPackageReference(string projectPath, string packageId, string version)
+    {
+        var doc = XDocument.Load(projectPath);
+        var project = doc.Root ?? throw new InvalidOperationException("Invalid project file");
+
+        // Check if the package already exists in the loaded document
+        var existingPackage = project.Elements("ItemGroup")
+            .SelectMany(g => g.Elements("PackageReference"))
+            .FirstOrDefault(e => e.Attribute("Include")?.Value == packageId);
+
+        if (existingPackage != null)
+        {
+            // Package already exists, no need to add
+            return;
+        }
+
+        // Find or create an ItemGroup for PackageReference items
+        var packageGroup = project.Elements("ItemGroup")
+            .FirstOrDefault(g => g.Elements("PackageReference").Any());
+
+        if (packageGroup == null)
+        {
+            // Create new ItemGroup for PackageReference
+            packageGroup = new XElement("ItemGroup");
+            project.Add(packageGroup);
+        }
+
+        // Add the new PackageReference entry
+        packageGroup.Add(new XElement("PackageReference",
+            new XAttribute("Include", packageId),
+            new XAttribute("Version", version)));
+
+        doc.Save(projectPath);
+    }
 }

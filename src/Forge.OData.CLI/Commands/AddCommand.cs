@@ -6,6 +6,10 @@ namespace Forge.OData.CLI.Commands;
 
 public static class AddCommand
 {
+    // Version of the Forge.OData.Client package to reference
+    // This is updated during release by the update-version.sh script
+    private const string ODataClientVersion = "0.0.2";
+
     public static async Task Execute(string endpoint, string? projectPath, string? clientName, string? outputPath, string? namespaceName)
     {
         try
@@ -15,6 +19,9 @@ public static class AddCommand
             // Find the project file
             var project = ProjectHelper.FindProjectFile(projectPath);
             Console.WriteLine($"Using project: {project}");
+
+            // Ensure the project has a reference to Forge.OData.Client
+            EnsureODataClientPackageReference(project);
 
             // Download metadata from endpoint
             Console.WriteLine("Downloading metadata...");
@@ -259,5 +266,21 @@ namespace {namespaceName}
     }}
 }}
 ";
+    }
+
+    private static void EnsureODataClientPackageReference(string projectPath)
+    {
+        const string packageId = "Forge.OData.Client";
+        
+        // Check if the package reference already exists
+        if (ProjectFileEditor.HasPackageReference(projectPath, packageId))
+        {
+            Console.WriteLine($"✓ Project already has a reference to {packageId}");
+            return;
+        }
+
+        Console.WriteLine($"Adding {packageId} package reference (version {ODataClientVersion})...");
+        ProjectFileEditor.AddPackageReference(projectPath, packageId, ODataClientVersion);
+        Console.WriteLine($"✓ Added {packageId} package reference");
     }
 }
