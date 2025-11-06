@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.1.0-beta.2] - 2025-11-06
 
 - Fixed the odata tool binary name to work by calling `dotnet odata`.
 
