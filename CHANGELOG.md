@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.2.0-beta.1] - 2025-11-06
 ### Forge.OData.Generator
 - Add `#nullable enable` directive to all generated files to resolve CS8669 warnings
 - Add null-coalescing operator for string properties to handle nullable return from `GetString()`
