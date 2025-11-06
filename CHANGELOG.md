@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+
+- Fix odata CLI command.
+
 ## [0.1.0-beta.1] - 2025-11-06
 
 ### Forge.OData.CLI
