@@ -1,13 +1,9 @@
 # Changelog
 
-## [0.1.0-beta.6] - 2025-11-06
-
-- Fix odata CLI command.
-
-## [0.1.0-beta.1] - 2025-11-06
-
+## [Unreleased]
 ### Forge.OData.CLI
 - **add command**: Now automatically verifies and adds Forge.OData.Client NuGet package reference to the project if not already present, using the same version as the CLI tool
+- Fix odata CLI command.
 
 ## [0.0.2] - 2025-11-05
 
