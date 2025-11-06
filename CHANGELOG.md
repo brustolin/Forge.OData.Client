@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased]
+### Release Workflow
+- Enhanced changelog merging in release workflow: when releasing a non-prerelease version, all pre-release sections of the same version are now automatically merged into the final version release
+
 ## [0.2.0-beta.2] - 2025-11-06
 ### Forge.OData.Generator
 - Fix CS8618 warnings in generated model classes by properly handling nullable reference types based on OData metadata

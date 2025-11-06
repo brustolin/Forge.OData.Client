@@ -65,16 +65,59 @@ DATE=$(date +%Y-%m-%d)
 # Create a temporary file
 TEMP_FILE=$(mktemp)
 
-# Read the changelog and update it
-awk -v version="$VERSION" -v date="$DATE" '
-/^## \[Unreleased\]/ {
-    # Replace the Unreleased header with the new released version header
-    print "## [" version "] - " date
-    # skip the original Unreleased header line
-    next
-}
-{ print }
-' CHANGELOG.md > "$TEMP_FILE"
+# Check if this is a prerelease version (contains -)
+if [[ "$VERSION" == *"-"* ]]; then
+    # For prerelease versions, just replace [Unreleased] with the version (old behavior)
+    awk -v version="$VERSION" -v date="$DATE" '
+    /^## \[Unreleased\]/ {
+        print "## [" version "] - " date
+        next
+    }
+    { print }
+    ' CHANGELOG.md > "$TEMP_FILE"
+else
+    # For non-prerelease versions, merge content from Unreleased and all matching prereleases
+    awk -v version="$VERSION" -v date="$DATE" '
+    BEGIN {
+        header_printed = 0
+    }
+    
+    /^## \[Unreleased\]/ {
+        if (!header_printed) {
+            print "## [" version "] - " date
+            header_printed = 1
+        }
+        next
+    }
+    
+    /^## \[/ {
+        # Check if this is a prerelease of the same base version
+        if ($0 ~ "^## \\[" version "-[^]]+\\]") {
+            # This is a prerelease header we want to skip (merge the content)
+            if (!header_printed) {
+                print "## [" version "] - " date
+                header_printed = 1
+            }
+            next
+        } else {
+            # Different version - print it
+            print
+            next
+        }
+    }
+    
+    # For all other lines, always print
+    {
+        print
+    }
+    
+    END {
+        if (!header_printed) {
+            print "## [" version "] - " date
+        }
+    }
+    ' CHANGELOG.md > "$TEMP_FILE"
+fi
 
 # Replace the original file
 mv "$TEMP_FILE" CHANGELOG.md
