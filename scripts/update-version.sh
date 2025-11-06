@@ -77,9 +77,7 @@ if [[ "$VERSION" == *"-"* ]]; then
     ' CHANGELOG.md > "$TEMP_FILE"
 else
     # For non-prerelease versions, merge content from Unreleased and all matching prereleases
-    BASE_VERSION="$VERSION"
-    
-    awk -v version="$VERSION" -v date="$DATE" -v base_version="$BASE_VERSION" '
+    awk -v version="$VERSION" -v date="$DATE" '
     BEGIN {
         header_printed = 0
     }
@@ -94,7 +92,7 @@ else
     
     /^## \[/ {
         # Check if this is a prerelease of the same base version
-        if ($0 ~ "^## \\[" base_version "-[^]]+\\]") {
+        if ($0 ~ "^## \\[" version "-[^]]+\\]") {
             # This is a prerelease header we want to skip (merge the content)
             if (!header_printed) {
                 print "## [" version "] - " date
