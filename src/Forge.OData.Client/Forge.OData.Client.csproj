@@ -8,7 +8,7 @@
     
     <!-- Package Metadata -->
     <PackageId>Forge.OData.Client</PackageId>
-    <Version>0.1.0-beta.2</Version>
+    <Version>0.1.0-beta.4</Version>
     <Authors>Dhiogo Brustolin</Authors>
     <Company>Brustolin</Company>
     <Product>Forge.OData.Client</Product>
