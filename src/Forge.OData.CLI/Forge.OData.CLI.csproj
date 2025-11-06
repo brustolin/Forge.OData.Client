@@ -30,6 +30,7 @@
 		<Copyright>Copyright © 2025 Brustolin</Copyright>
 		<PackageReleaseNotes>Initial release of Forge.OData.CLI as a .NET tool</PackageReleaseNotes>
 		<NoWarn>$(NoWarn);NU1903</NoWarn>
+		<NuspecFile>dotnet-odata.nuspec</NuspecFile>
 	</PropertyGroup>
 
 	<ItemGroup>
