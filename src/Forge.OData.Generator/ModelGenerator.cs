@@ -94,6 +94,7 @@ namespace Forge.OData.Generator
         private PropertyDeclarationSyntax GenerateProperty(ODataProperty property, bool isKey)
         {
             var propertyType = MapODataType(property.Type, property.Nullable);
+            var isNonNullableString = !property.Nullable && IsReferenceType(property.Type);
             
             var propertyDeclaration = PropertyDeclaration(
                 ParseTypeName(propertyType),
@@ -104,6 +105,17 @@ namespace Forge.OData.Generator
                         .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
                     AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
                         .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
+
+            // For non-nullable reference types (string, byte[]), add null-forgiving operator to suppress CS8618
+            if (isNonNullableString)
+            {
+                propertyDeclaration = propertyDeclaration.WithInitializer(
+                    EqualsValueClause(
+                        PostfixUnaryExpression(
+                            SyntaxKind.SuppressNullableWarningExpression,
+                            LiteralExpression(SyntaxKind.NullLiteralExpression))))
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+            }
 
             // Add [Key] attribute for key properties
             if (isKey)
@@ -119,6 +131,7 @@ namespace Forge.OData.Generator
         private PropertyDeclarationSyntax GenerateNavigationProperty(ODataNavigationProperty navProperty)
         {
             var propertyType = MapNavigationType(navProperty.Type, navProperty.Nullable);
+            var isCollection = navProperty.Type.StartsWith("Collection(");
 
             var propertyDeclaration = PropertyDeclaration(
                 ParseTypeName(propertyType),
@@ -129,6 +142,26 @@ namespace Forge.OData.Generator
                         .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)),
                     AccessorDeclaration(SyntaxKind.SetAccessorDeclaration)
                         .WithSemicolonToken(Token(SyntaxKind.SemicolonToken)));
+
+            // Initialize collection properties to avoid CS8618
+            if (isCollection)
+            {
+                propertyDeclaration = propertyDeclaration.WithInitializer(
+                    EqualsValueClause(
+                        ImplicitObjectCreationExpression()
+                            .WithArgumentList(ArgumentList())))
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+            }
+            // For non-nullable navigation properties (single entity), add null-forgiving operator
+            else if (!navProperty.Nullable)
+            {
+                propertyDeclaration = propertyDeclaration.WithInitializer(
+                    EqualsValueClause(
+                        PostfixUnaryExpression(
+                            SyntaxKind.SuppressNullableWarningExpression,
+                            LiteralExpression(SyntaxKind.NullLiteralExpression))))
+                    .WithSemicolonToken(Token(SyntaxKind.SemicolonToken));
+            }
 
             return propertyDeclaration;
         }
@@ -157,10 +190,19 @@ namespace Forge.OData.Generator
                 _ => baseType.StartsWith("Collection(") ? MapCollectionType(baseType) : baseType
             };
 
-            // Handle nullable value types
-            if (nullable && IsValueType(clrType) && clrType != "string" && clrType != "byte[]")
+            // Handle nullable types
+            if (nullable)
             {
-                return clrType + "?";
+                // For value types, append ?
+                if (IsValueType(clrType))
+                {
+                    return clrType + "?";
+                }
+                // For reference types (string, byte[]), append ?
+                else if (clrType == "string" || clrType == "byte[]")
+                {
+                    return clrType + "?";
+                }
             }
 
             return clrType;
@@ -207,6 +249,13 @@ namespace Forge.OData.Generator
             };
 
             return valueTypes.Contains(clrType);
+        }
+
+        private bool IsReferenceType(string odataType)
+        {
+            var baseType = odataType.Replace("Edm.", "");
+            // String and Binary are reference types in EDM
+            return baseType == "String" || baseType == "Binary";
         }
     }
 }
