@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [0.2.0-beta.2] - 2025-11-06
 ### Forge.OData.Generator
 - Fix CS8618 warnings in generated model classes by properly handling nullable reference types based on OData metadata
   - Non-nullable string properties (Nullable="false") are initialized with `= null!;` to suppress warnings
