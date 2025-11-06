@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
-  <metadata>
-    $CommonMetadataElements$
-    <packageTypes>
-      <packageType name="DotnetTool" />
-    </packageTypes>
-    <readme>README.md</readme>
-  </metadata>
+	<metadata>
+		<id>Forge.OData.CLI</id>
+		<version>0.1.0-beta.1</version>
+		<authors>Dhiogo Brustolin</authors>
+		<description>CLI tool for managing OData metadata in projects.</description>
+		<license type="expression">MIT</license>
+		<projectUrl>https://github.com/brustolin/Forge.OData.Client</projectUrl>
+		<repository type="git" url="https://github.com/brustolin/Forge.OData.Client" />
+		<packageTypes>
+			<packageType name="DotnetTool" />
+		</packageTypes>
+		<readme>README.md</readme>
+	</metadata>
 
-  <files>
-    $CommonFileElements$
-    <file src="README.md" target="\" />
-    <file src="$SettingsFile$" target="tools\$targetFramework$\any" />
-    <file src="$Output$" target="tools\$targetFramework$\any" />
-    <file src="$OutputBinary$" target="tools\$targetFramework$\any\tools\$TargetFramework$\any" />
-    <file src="$OutputRuntimeConfig$" target="tools\$targetFramework$\any\tools\$TargetFramework$\any" />
-    <file src="$OutputSymbol$" target="tools\$targetFramework$\any\tools\$TargetFramework$\any" />
-    <file src="$OutputExe$" target="tools\$targetFramework$\any\tools\net472\any" />
-    <file src="$OutputExeSymbol$" target="tools\$targetFramework$\any\tools\net472\any" />
-    <file src="$OutputX86Exe$" target="tools\$targetFramework$\any\tools\net472\win-x86" />
-    <file src="$OutputX86ExeSymbol$" target="tools\$targetFramework$\any\tools\net472\win-x86" />
-    <file src="$OutputARM64Exe$" target="tools\$targetFramework$\any\tools\net472\win-arm64" />
-    <file src="$OutputARM64ExeSymbol$" target="tools\$targetFramework$\any\tools\net472\win-arm64" />
-  </files>
+	<files>
+		<file src="bin\Release\net9.0\publish\**\*" target="tools\net9.0\any" />
+		<file src="README.md" target="\" />
+	</files>
 </package>
